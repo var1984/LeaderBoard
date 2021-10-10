@@ -14,18 +14,20 @@
           <input
             type="text"
             class="user_score"
-            v-model="user.score"
+            :value="user.score"
             @keyup.enter="saveNewScore(user, $event)"
             ref="input"
             :disabled="!isButtonDisabled[idx]"
           />
         </td>
         <td align="left" class="user_name">{{ user.name }}</td>
-        <td class="place_user" width="400" align="right"><PlaceUser :place="place(user.score)"/></td>
+        <td class="place_user" width="400" align="right">
+          <!-- <PlaceUser :place="place(user.score)" /> -->{{user.place - idx - 1}}
+        </td>
         <td class="change_score">
           <ChangeScore @editScore="editScore(idx)" />
         </td>
-        <HistoryUserScore :user="user" />
+        <!-- <HistoryUserScore :user="user" /> -->
       </tr>
     </table>
   </div>
@@ -34,33 +36,37 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import Adduser from "./AddUser";
-import PlaceUser from "./PlaceUser";
+// import PlaceUser from "./PlaceUser";
 import ChangeScore from "./ChangeScore";
-import HistoryUserScore from "./HistoryUserScore.vue";
+// import HistoryUserScore from "./HistoryUserScore.vue";
 export default {
   name: "Users",
   components: {
-    PlaceUser,
+    // PlaceUser,
     Adduser,
     ChangeScore,
-    HistoryUserScore,
+    // HistoryUserScore,
   },
+ 
   data() {
     return {
       words: ["st", "nd", "rd", "th"],
       edit: true,
       isButtonDisabled: {},
+      users: null,
     };
   },
-  mounted() {
+   mounted() {
     this.GET_USERS_SCORE();
+    this.sortUsersByScore(this.USERS).map((user, i) => ({
+      ...user,
+      place: i + 1,
+    }));
   },
   computed: {
     ...mapGetters(["USERS"]),
     sortList() {
-      return this.USERS.map((user) => ({
-        ...user,
-      })).sort((a, b) => b.score - a.score);
+      return this.sortUsersByScore(this.USERS);
     },
   },
   methods: {
@@ -77,23 +83,28 @@ export default {
           : 2
       ];
     },
-    saveNewScore(item, { target }) {
-      // console.log(target.value);
-      const index = this.USERS.findIndex(({ name }) => name === item.name);
-      const oldValue = this.USERS[index].score;
-      this.USERS[index].score = +target.value;
-      if (!this.USERS[index].history) {
-        this.USERS[index].history = [];
-      }
-      this.USERS[index].history.push({
-        date: new Date().toLocaleDateString(),
-        oldScore: oldValue,
-        newScore: +target.value,
-      });
+    saveNewScore({ name },{ target }) {
+      const score = Number(target.value);
+      const changedUser = this.USERS.find((user) => user.name === name);
+      changedUser.score = score;
+      // const index = this.USERS.findIndex(({ name }) => name === item.name);
+      // const oldValue = this.USERS[index].score;
+      // this.USERS[index].score = +target.value;
+      // if (!this.USERS[index].history) {
+      //   this.USERS[index].history = [];
+      // }
+      // this.USERS[index].history.push({
+      //   date: new Date().toLocaleDateString(),
+      //   oldScore: oldValue,
+      //   newScore: +target.value,
+      // });
       // console.log(this.USERS);
     },
+    sortUsersByScore(users) {
+      return users.slice().sort((a, b) => b.score - a.score);
+    },
     editScore(i) {
-         this.$set(this.isButtonDisabled, i, !this.isButtonDisabled[i]);
+      this.$set(this.isButtonDisabled, i, !this.isButtonDisabled[i]);
 
       if (this.isButtonDisabled[i]) {
         return this.$refs.input[i].focus();
@@ -107,12 +118,12 @@ export default {
       // this.edit = true;
       // // console.log(this.$refs.input[idx]);
     },
-    place(val) {
-      const indexOld = this.sortList.findIndex(({ score }) => score === val);
-      console.log(indexOld);
-      const indexNew = this.sortList.findIndex(({ score }) => score === val);
-      return  indexNew - indexOld;
-    },
+    // place(val) {
+    //   const indexOld = this.sortList.findIndex(({ score }) => score === val);
+    //   console.log(indexOld);
+    //   const indexNew = this.sortList.findIndex(({ score }) => score === val);
+    //   return  indexNew - indexOld;
+    // },
   },
 };
 </script>
