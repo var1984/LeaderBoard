@@ -5,17 +5,26 @@
       <Adduser />
     </div>
     <table class="leaders_list">
-      <tr class="leaders_item" v-for="(user, idx) of sortList" :key="idx">
-        <th class="user_num">{{ idx + 1 }}{{ declension(idx + 1, words) }}</th>
-        <th class="user_icon">
+      <tr class="leaders_item" v-for="(user, idx) of sortList" :key="user.id">
+        <td class="user_num">{{ idx + 1 }}{{ declension(idx + 1, words) }}</td>
+        <td class="user_icon">
           <img :src="require('@/assets/img/Img1.png')" alt="" />
-        </th>
-        <th align="left" class="user-score">{{ user.score }}</th>
-        <th align="left" class="user-name">{{ user.name }}</th>
-        <th class="place_user" width="400" align="right"><PlaceUser /></th>
-        <th class="change_score">
-          <ChangeScore :sortList="sortList" @history="getHistory" />
-        </th>
+        </td>
+        <td align="left" class="input_wrap">
+          <input
+            type="text"
+            class="user_score"
+            v-model="user.score"
+            @keyup.enter="saveNewScore(user, $event)"
+            ref="input"
+            :disabled="!isButtonDisabled[idx]"
+          />
+        </td>
+        <td align="left" class="user_name">{{ user.name }}</td>
+        <td class="place_user" width="400" align="right"><PlaceUser :place="place(user.score)"/></td>
+        <td class="change_score">
+          <ChangeScore @editScore="editScore(idx)" />
+        </td>
         <HistoryUserScore :user="user" />
       </tr>
     </table>
@@ -39,11 +48,20 @@ export default {
   data() {
     return {
       words: ["st", "nd", "rd", "th"],
-      history: [],
+      edit: true,
+      isButtonDisabled: {},
     };
   },
   mounted() {
     this.GET_USERS_SCORE();
+  },
+  computed: {
+    ...mapGetters(["USERS"]),
+    sortList() {
+      return this.USERS.map((user) => ({
+        ...user,
+      })).sort((a, b) => b.score - a.score);
+    },
   },
   methods: {
     ...mapActions(["GET_USERS_SCORE"]),
@@ -59,20 +77,41 @@ export default {
           : 2
       ];
     },
-    getHistory(history) {
-      this.history = history;
-      console.log(this.history);
+    saveNewScore(item, { target }) {
+      // console.log(target.value);
+      const index = this.USERS.findIndex(({ name }) => name === item.name);
+      const oldValue = this.USERS[index].score;
+      this.USERS[index].score = +target.value;
+      if (!this.USERS[index].history) {
+        this.USERS[index].history = [];
+      }
+      this.USERS[index].history.push({
+        date: new Date().toLocaleDateString(),
+        oldScore: oldValue,
+        newScore: +target.value,
+      });
+      // console.log(this.USERS);
     },
-  },
-  computed: {
-    ...mapGetters(["USERS"]),
-    sortList() {
-      return this.USERS.map((user) => ({
-        ...user,
-        score: user.score || 0,
-      }))
-        .slice()
-        .sort((a, b) => b.score - a.score);
+    editScore(i) {
+         this.$set(this.isButtonDisabled, i, !this.isButtonDisabled[i]);
+
+      if (this.isButtonDisabled[i]) {
+        return this.$refs.input[i].focus();
+      }
+      this.$refs.input[i].blur();
+      // this.esitScore = !this.esitScore;
+      // if (this.edit) {
+      //   this.$refs.input[idx].focus();
+      //   this.edit = false;
+      // }
+      // this.edit = true;
+      // // console.log(this.$refs.input[idx]);
+    },
+    place(val) {
+      const indexOld = this.sortList.findIndex(({ score }) => score === val);
+      console.log(indexOld);
+      const indexNew = this.sortList.findIndex(({ score }) => score === val);
+      return  indexNew - indexOld;
     },
   },
 };
@@ -108,14 +147,20 @@ h2 {
     .user_icon {
       padding-right: 42px;
     }
-    .user-score {
-      font-weight: bold;
-      font-size: 30px;
-      line-height: 21px;
-      color: #1b1d1a;
-      opacity: 0.91;
+
+    .input_wrap {
+      min-width: 70px;
+      .user_score {
+        font-weight: bold;
+        font-size: 30px;
+        line-height: 21px;
+        color: #1b1d1a;
+        opacity: 0.91;
+        width: 100%;
+        border: none;
+      }
     }
-    .user-name {
+    .user_name {
       font-size: 14px;
       line-height: 21px;
       padding-left: 31px;

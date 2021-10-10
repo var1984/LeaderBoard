@@ -2,13 +2,15 @@
   <div>
     <div class="wrap_place">
       <img :src="require('@/assets/img/Arrow.svg')" alt="" />
-      <p><span>2</span> places</p>
+      <p><span>{{place}}</span> places</p>
     </div>
   </div>
 </template>
 <script>
 export default {
   name: "PlaceUser",
+  props:['place']
+  
 };
 </script>
 <style lang="scss" scoped>

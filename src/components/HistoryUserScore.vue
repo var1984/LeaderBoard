@@ -33,8 +33,8 @@ export default {
   background-color: blanchedalmond;
   border: 1px solid black;
   position: absolute;
-  top: 0;
-  left: 220px;
+  top: 20px;
+  left: 450px;
   opacity: 0;
 }
 </style>
