@@ -15,19 +15,19 @@
             type="text"
             class="user_score"
             :value="user.score"
-            @keyup.enter="saveNewScore(user, $event)"
+            @keyup.enter="saveNewScore(user, $event, idx)"
             ref="input"
-            :disabled="!isButtonDisabled[idx]"
+            
           />
         </td>
         <td align="left" class="user_name">{{ user.name }}</td>
         <td class="place_user" width="400" align="right">
-          <!-- <PlaceUser :place="place(user.score)" /> -->{{user.place - idx - 1}}
+          <PlaceUser :place=" user.place - idx - 1" />
         </td>
         <td class="change_score">
           <ChangeScore @editScore="editScore(idx)" />
         </td>
-        <!-- <HistoryUserScore :user="user" /> -->
+        <HistoryUserScore :user="user" />
       </tr>
     </table>
   </div>
@@ -36,37 +36,33 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import Adduser from "./AddUser";
-// import PlaceUser from "./PlaceUser";
+import PlaceUser from "./PlaceUser";
 import ChangeScore from "./ChangeScore";
-// import HistoryUserScore from "./HistoryUserScore.vue";
+import HistoryUserScore from "./HistoryUserScore.vue";
 export default {
   name: "Users",
   components: {
-    // PlaceUser,
+    PlaceUser,
     Adduser,
     ChangeScore,
-    // HistoryUserScore,
+    HistoryUserScore,
   },
- 
+
   data() {
     return {
       words: ["st", "nd", "rd", "th"],
       edit: true,
       isButtonDisabled: {},
-      users: null,
+      users: [],
     };
   },
-   mounted() {
+  mounted() {
     this.GET_USERS_SCORE();
-    this.sortUsersByScore(this.USERS).map((user, i) => ({
-      ...user,
-      place: i + 1,
-    }));
   },
   computed: {
     ...mapGetters(["USERS"]),
     sortList() {
-      return this.sortUsersByScore(this.USERS);
+      return this.sortUsersByScore(this.users);
     },
   },
   methods: {
@@ -83,22 +79,22 @@ export default {
           : 2
       ];
     },
-    saveNewScore({ name },{ target }) {
+    saveNewScore({name}, { target },idx) {
       const score = Number(target.value);
-      const changedUser = this.USERS.find((user) => user.name === name);
+      const changedUser = this.users.find((user) => name === user.name);
+       const oldValue = this.users[idx].score;
       changedUser.score = score;
-      // const index = this.USERS.findIndex(({ name }) => name === item.name);
-      // const oldValue = this.USERS[index].score;
-      // this.USERS[index].score = +target.value;
-      // if (!this.USERS[index].history) {
-      //   this.USERS[index].history = [];
-      // }
-      // this.USERS[index].history.push({
-      //   date: new Date().toLocaleDateString(),
-      //   oldScore: oldValue,
-      //   newScore: +target.value,
-      // });
-      // console.log(this.USERS);
+      const index = this.users.findIndex((user) => user.name === name);
+     
+      if (!this.users[index].history) {
+        this.users[index].history = [];
+      }
+      this.users[index].history.push({
+        date: new Date().toLocaleDateString(),
+        oldScore: oldValue,
+        newScore: score,
+      });
+      console.log(this.users[index].history);
     },
     sortUsersByScore(users) {
       return users.slice().sort((a, b) => b.score - a.score);
@@ -125,6 +121,16 @@ export default {
     //   return  indexNew - indexOld;
     // },
   },
+  watch:{
+    USERS(newChange){
+        if(newChange.length > 0){
+          this.users = this.sortUsersByScore(newChange).map((user, i) => ({
+      ...user,
+      place: i + 1,
+    }));
+        }
+    }
+  }
 };
 </script>
 
