@@ -3,7 +3,7 @@
     <ul>
       <li v-for="(user, idx) of topLeader" :key="idx">
         <div>
-          <img :src="slides[user.name]" alt="" />
+          <img :src="slides[idx]" alt="" />
           <span class="top_score">{{ user.score }}</span>
         </div>
         <p>{{ user.name }}</p>

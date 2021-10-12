@@ -8,7 +8,7 @@
       <tr class="leaders_item" v-for="(user, idx) of sortList" :key="user.id">
         <td class="user_num">{{ idx + 1 }}{{ declension(idx + 1, words) }}</td>
         <td class="user_icon">
-          <img :src="slides[user.name]" alt="" />
+          <img :src="slides[idx]" alt="" />
         </td>
         <td align="left" class="input_wrap">
           <input

@@ -26,16 +26,17 @@ export default {
   components: { Users, TopUsers },
   data() {
     return {
-      slides: {
-        elena: require("../assets/img/img.png"),
-        fred: require("../assets/img/img2.png"),
-        harriet: require("../assets/img/img3.png"),
-        bob: require("../assets/img/img4.png"),
-        chris: require("../assets/img/img5.png"),
-        alice: require("../assets/img/img6.png"),
-        dom: require("../assets/img/img7.png"),
-        grace: require("../assets/img/img8.png"),
-      },
+      slides: [
+        require("../assets/img/img.png"),
+        require("../assets/img/img2.png"),
+        require("../assets/img/img3.png"),
+        require("../assets/img/img4.png"),
+        require("../assets/img/img5.png"),
+        require("../assets/img/img6.png"),
+        require("../assets/img/img7.png"),
+        require("../assets/img/img8.png"),
+        require("../assets/img/img9.png"),
+      ],
     };
   },
 };
