@@ -3,7 +3,7 @@
     <ul>
       <li v-for="(user, idx) of topLeader" :key="idx">
         <div>
-          <img :src="require('@/assets/img/Img1.png')" alt="" />
+          <img :src="slides[user.name]" alt="" />
           <span class="top_score">{{ user.score }}</span>
         </div>
         <p>{{ user.name }}</p>
@@ -15,6 +15,12 @@
 import { mapGetters } from "vuex";
 export default {
   name: "TopUSers",
+  props: {
+    slides: {
+      type: Object,
+      require: true,
+    },
+  },
   computed: {
     ...mapGetters(["USERS"]),
     topLeader() {
@@ -46,6 +52,10 @@ ul {
         background-color: #fff;
         padding: 2px 8px 3px 9px;
         border-radius: 5px;
+      }
+      img {
+        width: 84px;
+        height: 84px;
       }
     }
     p {

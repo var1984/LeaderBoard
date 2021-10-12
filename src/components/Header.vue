@@ -5,7 +5,7 @@
         <div class="header_leader-list">
           <div class="leader-list">
             <div class="title_scorers">All time Highest Scorers</div>
-            <TopUsers />
+            <TopUsers :slides="slides" />
           </div>
           <div class="img_title">
             <img :src="require('@/assets/img/title_img.png')" alt="" />
@@ -13,7 +13,7 @@
         </div>
       </div>
     </header>
-    <Users />
+    <Users :slides="slides" />
   </div>
 </template>
 
@@ -25,7 +25,18 @@ export default {
   name: "Header",
   components: { Users, TopUsers },
   data() {
-    return {};
+    return {
+      slides: {
+        elena: require("../assets/img/img.png"),
+        fred: require("../assets/img/img2.png"),
+        harriet: require("../assets/img/img3.png"),
+        bob: require("../assets/img/img4.png"),
+        chris: require("../assets/img/img5.png"),
+        alice: require("../assets/img/img6.png"),
+        dom: require("../assets/img/img7.png"),
+        grace: require("../assets/img/img8.png"),
+      },
+    };
   },
 };
 </script>

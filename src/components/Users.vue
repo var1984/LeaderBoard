@@ -8,7 +8,7 @@
       <tr class="leaders_item" v-for="(user, idx) of sortList" :key="user.id">
         <td class="user_num">{{ idx + 1 }}{{ declension(idx + 1, words) }}</td>
         <td class="user_icon">
-          <img :src="require('@/assets/img/Img1.png')" alt="" />
+          <img :src="slides[user.name]" alt="" />
         </td>
         <td align="left" class="input_wrap">
           <input
@@ -17,12 +17,11 @@
             :value="user.score"
             @keyup.enter="saveNewScore(user, $event, idx)"
             ref="input"
-            
           />
         </td>
         <td align="left" class="user_name">{{ user.name }}</td>
         <td class="place_user" width="400" align="right">
-          <PlaceUser :place=" user.place - idx - 1" />
+          <PlaceUser :place="user.place - idx - 1" :user="user" :idx="idx" />
         </td>
         <td class="change_score">
           <ChangeScore @editScore="editScore(idx)" />
@@ -41,6 +40,12 @@ import ChangeScore from "./ChangeScore";
 import HistoryUserScore from "./HistoryUserScore.vue";
 export default {
   name: "Users",
+  props: {
+    slides: {
+      type: Object,
+      require: true,
+    },
+  },
   components: {
     PlaceUser,
     Adduser,
@@ -54,6 +59,7 @@ export default {
       edit: true,
       isButtonDisabled: {},
       users: [],
+      index: 0,
     };
   },
   mounted() {
@@ -69,32 +75,30 @@ export default {
     ...mapActions(["GET_USERS_SCORE"]),
 
     declension(n, titles) {
-      //   let cases = [2, 0, 1, 1, 1, 2];
-      // return txt[ (number%100>4 && number%100<20)? 2 : cases[(number%10<5)?number%10:5] ];
       return titles[
-        n % 10 == 1 && n % 100 != 11
+        n % 10 == 1 && n % 10 != 11
           ? 0
-          : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)
+          : n % 10 === 2 && n % 10 <= 3 && (n % 100 < 10 || n % 100 >= 20)
           ? 1
-          : 2
+          : 3
       ];
     },
-    saveNewScore({name}, { target },idx) {
+    saveNewScore({ name }, { target }, idx) {
       const score = Number(target.value);
       const changedUser = this.users.find((user) => name === user.name);
-       const oldValue = this.users[idx].score;
+      const oldValue = this.users[idx].score;
       changedUser.score = score;
       const index = this.users.findIndex((user) => user.name === name);
-     
+      this.index = index;
       if (!this.users[index].history) {
         this.users[index].history = [];
       }
       this.users[index].history.push({
-        date: new Date().toLocaleDateString(),
+        date: new Date().toLocaleString(),
         oldScore: oldValue,
         newScore: score,
       });
-      console.log(this.users[index].history);
+      console.log(index, idx);
     },
     sortUsersByScore(users) {
       return users.slice().sort((a, b) => b.score - a.score);
@@ -114,23 +118,17 @@ export default {
       // this.edit = true;
       // // console.log(this.$refs.input[idx]);
     },
-    // place(val) {
-    //   const indexOld = this.sortList.findIndex(({ score }) => score === val);
-    //   console.log(indexOld);
-    //   const indexNew = this.sortList.findIndex(({ score }) => score === val);
-    //   return  indexNew - indexOld;
-    // },
   },
-  watch:{
-    USERS(newChange){
-        if(newChange.length > 0){
-          this.users = this.sortUsersByScore(newChange).map((user, i) => ({
-      ...user,
-      place: i + 1,
-    }));
-        }
-    }
-  }
+  watch: {
+    USERS(newChange) {
+      if (newChange.length > 0) {
+        this.users = this.sortUsersByScore(newChange).map((user, i) => ({
+          ...user,
+          place: i + 1,
+        }));
+      }
+    },
+  },
 };
 </script>
 
@@ -163,6 +161,11 @@ h2 {
     }
     .user_icon {
       padding-right: 42px;
+
+      img {
+        width: 38px;
+        height: 38px;
+      }
     }
 
     .input_wrap {
