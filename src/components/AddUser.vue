@@ -15,6 +15,7 @@
 import { mapGetters } from "vuex";
 export default {
   name: "Adduser",
+  props: ["slides"],
   data() {
     return {
       show: false,
@@ -32,6 +33,7 @@ export default {
     saveScore() {
       this.show = false;
       this.USERS.push({ ...this.USERS, name: this.name, score: this.score });
+      this.slides[this.name] = require("../assets/img/img.png");
       this.name = "";
       this.score = "";
     },
