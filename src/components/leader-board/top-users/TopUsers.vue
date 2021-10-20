@@ -12,6 +12,7 @@
 	</div>
 </template>
 <script>
+// import { mapGetters } from 'vuex';
 export default {
 	name: 'TopUSers',
 	props: {
@@ -25,7 +26,9 @@ export default {
 		},
 	},
 	computed: {
+		// ...mapGetters(['top_leader']),
 		topLeader() {
+			// TODO: Add this func to store like getter   --ok
 			return this.users
 				.map(user => user)
 				.sort((a, b) => b.score - a.score)
@@ -53,7 +56,7 @@ export default {
 					font-size: 20px;
 					line-height: 32px;
 					color: #81c926;
-					background-color: $wc;
+					background-color: $whiteColor;
 					padding: 2px 8px 3px 9px;
 					border-radius: 5px;
 				}
@@ -65,7 +68,7 @@ export default {
 			p {
 				font-size: 12px;
 				line-height: 32px;
-				color: $wc;
+				color: $whiteColor;
 				text-align: center;
 			}
 		}

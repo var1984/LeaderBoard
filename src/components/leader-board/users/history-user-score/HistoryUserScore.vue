@@ -2,10 +2,10 @@
 	<div class="history_wrap">
 		<h4>History Score</h4>
 		<ul v-if="user.history">
-			<li v-for="item of user.history" :key="item.id">
-				<div>New score: {{ item.newScore }}</div>
-				<div>Old score:{{ item.oldScore }}</div>
-				<div>Change date: {{ item.date }}</div>
+			<li v-for="user of user.history" :key="user.id">
+				<div>New score: {{ user.newScore }}</div>
+				<div>Old score:{{ user.oldScore }}</div>
+				<div>Change date: {{ user.date }}</div>
 			</li>
 		</ul>
 		<div v-else>No History</div>

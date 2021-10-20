@@ -24,7 +24,7 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters(['USERS']),
+		...mapGetters(['get_users']),
 	},
 	methods: {
 		showModal() {
@@ -32,7 +32,7 @@ export default {
 		},
 		saveScore() {
 			this.show = false;
-			this.USERS.push({ ...this.USERS, name: this.name, score: this.score });
+			this.get_users.push({ ...this.get_users, name: this.name, score: this.score });
 			this.slides[this.name] = require('../../../../assets/img/img.png');
 			this.name = '';
 			this.score = '';
@@ -42,17 +42,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .add-user {
-	button {
-		padding: 12px 24px;
-		background-color: #6b59cc;
-		border: none;
-		border-radius: 6px;
-		color: $wc;
-		font-weight: bold;
-		font-size: 12px;
-		line-height: 18px;
-		cursor: pointer;
-	}
 	position: relative;
 	&_score-form {
 		width: 500px;
@@ -63,7 +52,7 @@ export default {
 		position: absolute;
 		right: 150px;
 		top: 0;
-		background-color: $wc;
+		background-color: $whiteColor;
 		z-index: 100;
 		h3 {
 			font-size: 35px;

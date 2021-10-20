@@ -69,7 +69,7 @@ export default {
 	font-weight: 600;
 	font-size: 20px;
 	line-height: 32px;
-	color: $wc;
+	color: $whiteColor;
 }
 </style>
 

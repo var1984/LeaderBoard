@@ -1,9 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import LeaderBoardMain from '../components/leader-board/LeaderBoardMain'
-import Info from '../components/leader-board/Info'
+
+
 
 Vue.use(VueRouter)
+
+const Info = () => import('../components/leader-board/Info')
+const LeaderBoardMain = () => import('../components/leader-board/LeaderBoardMain')
 
 const routes = [
   {

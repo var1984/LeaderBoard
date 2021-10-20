@@ -1,12 +1,15 @@
 <template>
 	<div class="leaders">
+		<button @click="addPost">Open Virtual Scroll POSTS on/off</button>
+		<AddPost v-if="visibleModalPosts" />
 		<div class="addLeader">
 			<h2>Leaders table for this period</h2>
+
 			<Adduser :slides="slides" />
 		</div>
 		<table class="leaders_list">
-			<tr class="leaders_list_item" v-for="(user, idx) of sortList" :key="user.id">
-				<td class="user_num">{{ idx + 1 }}{{ declension(idx + 1, words) }}</td>
+			<tr class="leaders_list_item" v-for="(user, index) of sortList" :key="user.id">
+				<td class="user_num">{{ index + 1 }}{{ declension(index + 1, words) }}</td>
 				<td class="user_icon">
 					<img :src="slides[user.name]" alt="" />
 				</td>
@@ -15,16 +18,17 @@
 						type="text"
 						class="user_score"
 						:value="user.score"
-						@keyup.enter="saveNewScore(user, $event, idx)"
+						@keyup.enter="saveNewScore(user, $event, index)"
 						ref="input"
 					/>
 				</td>
 				<td align="left" class="user_name">{{ user.name }}</td>
 				<td class="place_user" width="400" align="right">
-					<PlaceUser :place="user.place - idx - 1" :user="user" :idx="idx" />
+					<PlaceUser :place="user.place" :user="user" :index="index" />
+					{{ user.place }} {{ index }}
 				</td>
 				<td class="change_score">
-					<ChangeScore @editScore="editScore(idx)" />
+					<ChangeScore @editScore="editScore(index)" />
 				</td>
 				<HistoryUserScore :user="user" />
 			</tr>
@@ -38,6 +42,7 @@ import Adduser from './add-user/AddUser';
 import PlaceUser from './place-user/PlaceUser';
 import ChangeScore from './change-score/ChangeScore';
 import HistoryUserScore from './history-user-score/HistoryUserScore';
+import AddPost from '../addPost/AddPost';
 export default {
 	name: 'Users',
 	props: {
@@ -51,6 +56,7 @@ export default {
 		Adduser,
 		ChangeScore,
 		HistoryUserScore,
+		AddPost,
 	},
 
 	data() {
@@ -58,15 +64,18 @@ export default {
 			words: ['st', 'nd', 'rd', 'th'],
 			edit: true,
 			isButtonDisabled: {},
-			users: [],
 			index: 0,
+			users: [],
+			visibleModalPosts: false,
 		};
 	},
 	mounted() {
 		this.GET_USERS_SCORE();
+		console.log('до', this.users);
 	},
 	computed: {
 		...mapGetters(['get_users']),
+
 		sortList() {
 			return this.sortUsersByScore(this.users);
 		},
@@ -79,17 +88,20 @@ export default {
 				n % 10 == 1 && n % 10 != 11 ? 0 : n % 10 === 2 && n % 10 <= 3 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 3
 			];
 		},
-		saveNewScore({ name }, { target }, idx) {
+		saveNewScore(user, event, index) {
+			const { name } = user;
+			const { target } = event;
 			const score = Number(target.value);
+			//  this.get_users[index].score = score;
 			const changedUser = this.users.find(user => name === user.name);
-			const oldValue = this.users[idx].score;
+			const oldValue = this.users[index].score;
 			changedUser.score = score;
-			const index = this.users.findIndex(user => user.name === name);
-			this.index = index;
-			if (!this.users[index].history) {
-				this.users[index].history = [];
+			const indexName = this.users.findIndex(user => user.name === name);
+			this.index = indexName;
+			if (!this.users[indexName].history) {
+				this.users[indexName].history = [];
 			}
-			this.users[index].history.push({
+			this.users[indexName].history.push({
 				date: new Date().toLocaleString(),
 				oldScore: oldValue,
 				newScore: score,
@@ -98,24 +110,27 @@ export default {
 		sortUsersByScore(users) {
 			return users.slice().sort((a, b) => b.score - a.score);
 		},
-		editScore(i) {
-			this.$set(this.isButtonDisabled, i, !this.isButtonDisabled[i]);
+		editScore(index) {
+			this.$set(this.isButtonDisabled, index, !this.isButtonDisabled[index]);
 
-			if (this.isButtonDisabled[i]) {
-				return this.$refs.input[i].focus();
+			if (this.isButtonDisabled[index]) {
+				return this.$refs.input[index].focus();
 			}
-			this.$refs.input[i].blur();
+			this.$refs.input[index].blur();
+		},
+		addPost() {
+			this.visibleModalPosts = !this.visibleModalPosts;
 		},
 	},
 	watch: {
 		get_users(newChange) {
-			if (newChange.length > 0) {
-				this.users = this.sortUsersByScore(newChange).map((user, i) => ({
+			if (newChange) {
+				this.users = this.sortUsersByScore(newChange).map((user, index) => ({
 					...user,
-					place: i + 1,
+					place: index + 1,
 				}));
-				this.$emit('set', this.users);
 			}
+			this.$emit('set', this.get_users);
 		},
 	},
 };
@@ -124,7 +139,7 @@ export default {
 <style lang="scss" scoped>
 .leaders {
 	width: $width-block;
-	background: $wc;
+	background: $whiteColor;
 	border: 1px solid #eceef5;
 	border-radius: 10px;
 	margin-top: 36px;
@@ -184,5 +199,8 @@ h2 {
 	display: flex;
 	justify-content: space-between;
 	margin: 22px 0 38px;
+}
+button {
+	margin-top: 20px;
 }
 </style>
