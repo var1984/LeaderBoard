@@ -25,7 +25,6 @@
 				<td align="left" class="user_name">{{ user.name }}</td>
 				<td class="place_user" width="400" align="right">
 					<PlaceUser :place="user.place" :user="user" :index="index" />
-					{{ user.place }} {{ index }}
 				</td>
 				<td class="change_score">
 					<ChangeScore @editScore="editScore(index)" />
