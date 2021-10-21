@@ -32,7 +32,11 @@ export default {
 		},
 		saveScore() {
 			this.show = false;
-			this.get_users.push({ ...this.get_users, name: this.name, score: this.score });
+			const addUser = {
+				name: this.name,
+				score: this.score,
+			};
+			this.$store.commit('SET_NEW_USER', addUser);
 			this.slides[this.name] = require('../../../../assets/img/img.png');
 			this.name = '';
 			this.score = '';

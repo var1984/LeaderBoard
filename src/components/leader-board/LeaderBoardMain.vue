@@ -5,7 +5,7 @@
 				<div class="header_leader-list">
 					<div class="leader-list">
 						<div class="title_scorers">All time Highest Scorers</div>
-						<TopUsers :slides="slides" :users="users" />
+						<TopUsers :slides="slides" />
 					</div>
 					<div class="img_title">
 						<img :src="require('@/assets/img/title_img.png')" alt="" />
@@ -14,7 +14,7 @@
 			</div>
 		</header>
 
-		<Users :slides="slides" @set="setUser" />
+		<Users :slides="slides" />
 	</div>
 </template>
 
@@ -37,13 +37,7 @@ export default {
 				dom: require('../../assets/img/img7.png'),
 				grace: require('../../assets/img/img8.png'),
 			},
-			users: [],
 		};
-	},
-	methods: {
-		setUser(user) {
-			this.users = user;
-		},
 	},
 };
 </script>

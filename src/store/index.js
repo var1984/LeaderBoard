@@ -17,11 +17,14 @@ export default new Vuex.Store({
 
       }));
     },
-    SET_NEW_SCORE(state, scores) {
-      state.users = scores
+    SET_NEW_SCORE(state, newScore) {
+      state.users.filter(user => user.name === newScore.name ? user.score = newScore.score : user)
     },
     SET_POSTS(state, posts) {
       state.posts = posts
+    },
+    SET_NEW_USER(state, newUser) {
+      state.users.push(newUser)
     }
   },
   actions: {
@@ -49,14 +52,14 @@ export default new Vuex.Store({
   getters: {
     get_users(state) {
       return state.users
-        .sort((a, b) => b.score - a.score)
+      // .sort((a, b) => b.score - a.score)
 
     },
     top_leader(state) {
       // console.log(state.users);
       return state.users
         .map(user => user)
-        .slice(0, 4);
+        .slice(0, 4).sort((a, b) => b.score - a.score);
 
     },
     posts(state) {

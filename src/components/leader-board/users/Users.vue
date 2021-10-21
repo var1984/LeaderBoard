@@ -70,7 +70,6 @@ export default {
 	},
 	mounted() {
 		this.GET_USERS_SCORE();
-		console.log('до', this.users);
 	},
 	computed: {
 		...mapGetters(['get_users']),
@@ -91,11 +90,13 @@ export default {
 			const { name } = user;
 			const { target } = event;
 			const score = Number(target.value);
-			//  this.get_users[index].score = score;
+
+			// this.get_users[index].score = score;
 			const changedUser = this.users.find(user => name === user.name);
 			const oldValue = this.users[index].score;
 			changedUser.score = score;
 			const indexName = this.users.findIndex(user => user.name === name);
+
 			this.index = indexName;
 			if (!this.users[indexName].history) {
 				this.users[indexName].history = [];
@@ -105,6 +106,11 @@ export default {
 				oldScore: oldValue,
 				newScore: score,
 			});
+			const newScore = {
+				name: name,
+				score: score,
+			};
+			this.$store.commit('SET_NEW_SCORE', newScore);
 		},
 		sortUsersByScore(users) {
 			return users.slice().sort((a, b) => b.score - a.score);
@@ -129,7 +135,6 @@ export default {
 					place: index + 1,
 				}));
 			}
-			this.$emit('set', this.get_users);
 		},
 	},
 };

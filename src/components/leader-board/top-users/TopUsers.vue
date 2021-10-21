@@ -1,7 +1,7 @@
 <template>
 	<div class="top-users">
 		<ul>
-			<li v-for="user of topLeader" :key="user.id">
+			<li v-for="user of top_leader" :key="user.id">
 				<div>
 					<img :src="slides[user.name]" alt="" />
 					<span class="top_score">{{ user.score }}</span>
@@ -12,7 +12,7 @@
 	</div>
 </template>
 <script>
-// import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 export default {
 	name: 'TopUSers',
 	props: {
@@ -20,20 +20,9 @@ export default {
 			type: Object,
 			require: true,
 		},
-		users: {
-			type: Array,
-			require: true,
-		},
 	},
 	computed: {
-		// ...mapGetters(['top_leader']),
-		topLeader() {
-			// TODO: Add this func to store like getter   --ok
-			return this.users
-				.map(user => user)
-				.sort((a, b) => b.score - a.score)
-				.slice(0, 4);
-		},
+		...mapGetters(['top_leader']),
 	},
 };
 </script>
